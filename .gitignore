@@ -35,3 +35,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# uploads
+/public/uploads/*
+!/public/uploads/.gitkeep
+
+# sales documentation (not needed in repo)
+FEATURES.md
+SALES_PITCH.md
+

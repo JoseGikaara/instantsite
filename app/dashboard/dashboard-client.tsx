@@ -1,8 +1,10 @@
 'use client'
 
+import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { formatDateReadable } from '@/lib/date-utils'
+import { DomainConnectionModal } from '@/components/DomainConnectionModal'
 
 interface Agent {
   id: string
@@ -22,6 +24,8 @@ interface Preview {
   primary_color?: string
   accent_color?: string
   theme?: string
+  custom_domain?: string | null
+  domain_status?: 'PENDING' | 'CONNECTED' | 'ERROR' | null
 }
 
 interface Audit {
@@ -59,6 +63,8 @@ export default function DashboardClient({
   hostingSummary: HostingSummary
 }) {
   const router = useRouter()
+  const [domainModalOpen, setDomainModalOpen] = useState(false)
+  const [selectedWebsite, setSelectedWebsite] = useState<Preview | null>(null)
 
   async function handleLogout() {
     try {
@@ -251,7 +257,7 @@ export default function DashboardClient({
                           {formatDateReadable(preview.created_at)}
                         </td>
                         <td className="px-6 py-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
+                          <div className="flex items-center justify-end gap-2 flex-wrap">
                             {preview.preview_url && (
                               <Link
                                 href={`/preview/${preview.preview_url}`}
@@ -259,6 +265,17 @@ export default function DashboardClient({
                               >
                                 View →
                               </Link>
+                            )}
+                            {preview.status === 'LIVE' && preview.preview_url && (
+                              <button
+                                onClick={() => {
+                                  setSelectedWebsite(preview)
+                                  setDomainModalOpen(true)
+                                }}
+                                className="px-3 py-1 bg-blue-500/20 hover:bg-blue-500/30 border border-blue-500/30 text-blue-400 rounded-lg text-xs font-medium transition"
+                              >
+                                {preview.custom_domain ? 'Domain' : 'Connect Domain'}
+                              </button>
                             )}
                             {preview.status === 'PREVIEW' && preview.preview_url && (
                               <button
@@ -367,6 +384,21 @@ export default function DashboardClient({
           )}
         </section>
       </main>
+
+      {/* Domain Connection Modal */}
+      {selectedWebsite && (
+        <DomainConnectionModal
+          isOpen={domainModalOpen}
+          onClose={() => {
+            setDomainModalOpen(false)
+            setSelectedWebsite(null)
+            router.refresh()
+          }}
+          websiteId={selectedWebsite.preview_url || ''}
+          currentDomain={selectedWebsite.custom_domain}
+          currentStatus={selectedWebsite.domain_status}
+        />
+      )}
     </div>
   )
 }

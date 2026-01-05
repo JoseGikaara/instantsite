@@ -33,6 +33,12 @@ enum HostingPlan {
   ANNUAL
 }
 
+enum DomainStatus {
+  PENDING
+  CONNECTED
+  ERROR
+}
+
 model WebsitePreview {
   id            String   @id @default(cuid())
   agent_id      String
@@ -53,6 +59,9 @@ model WebsitePreview {
   // Selected Sections (JSON array of section configs)
   sections      Json     @default("[]")
   
+  // Section Configurations (user-provided configs before AI generation)
+  section_configurations Json?  @default("{}")
+  
   // AI Generated Content
   ai_content    Json?    @default("{}")
   
@@ -66,6 +75,10 @@ model WebsitePreview {
   hosting_plan  HostingPlan?  // MONTHLY or ANNUAL (null for PREVIEW)
   deployed_at   DateTime?
   last_hosting_charged_at DateTime?
+  
+  // Custom Domain
+  custom_domain String?
+  domain_status DomainStatus?
   
   created_at    DateTime @default(now())
   

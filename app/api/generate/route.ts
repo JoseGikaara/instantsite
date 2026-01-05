@@ -39,6 +39,7 @@ export async function POST(request: NextRequest) {
       accent_color = '#EF4D8E',
       theme = 'dark',
       sections = [],
+      section_configurations = {},
       global_features = {},
     } = await request.json()
 
@@ -70,18 +71,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Generate AI content for each section
+    // Generate AI content for each section (use section configurations if provided)
     const sectionTypes = sections.map((s: any) => s.type)
     let aiContent = {}
     
     try {
-      aiContent = await generateAllSectionContent(sectionTypes, {
+      // Merge section configurations into business info for better AI generation
+      const enhancedBusinessInfo = {
         businessName: business_name,
         phone,
         location,
         services,
         websiteType: website_type,
-      })
+        // Add section-specific configs to help AI
+        heroConfig: section_configurations?.hero,
+        galleryConfig: section_configurations?.gallery,
+        contactConfig: section_configurations?.contact || section_configurations?.contactForm,
+      }
+      
+      aiContent = await generateAllSectionContent(sectionTypes, enhancedBusinessInfo)
       
       // Track AI credits used
       const aiSectionsCount = sectionTypes.filter((type: string) => 
@@ -115,6 +123,7 @@ export async function POST(request: NextRequest) {
         accent_color,
         theme,
         sections: JSON.parse(JSON.stringify(sections)),
+        section_configurations: JSON.parse(JSON.stringify(section_configurations)),
         ai_content: JSON.parse(JSON.stringify(aiContent)),
         global_features: JSON.parse(JSON.stringify(global_features)),
         preview_url: previewId,

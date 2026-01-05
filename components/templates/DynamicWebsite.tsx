@@ -14,6 +14,58 @@ import GalleryGrid from '@/components/website-sections/GalleryGrid'
 import WhatsAppFloat from '@/components/website-sections/WhatsAppFloat'
 import NewsletterPopup from '@/components/website-sections/NewsletterPopup'
 import Footer from '@/components/website-sections/Footer'
+// WhatsApp Lead sections
+import WhyWhatsAppSection from '@/components/website-sections/WhyWhatsAppSection'
+import ServicePackagesSection from '@/components/website-sections/ServicePackagesSection'
+import WhatsAppConversationSection from '@/components/website-sections/WhatsAppConversationSection'
+import QuickResponseSection from '@/components/website-sections/QuickResponseSection'
+// Landing Page sections
+import VideoHeroSection from '@/components/website-sections/VideoHeroSection'
+import ProblemSolutionSection from '@/components/website-sections/ProblemSolutionSection'
+import CountdownTimerSection from '@/components/website-sections/CountdownTimerSection'
+import ComparisonSection from '@/components/website-sections/ComparisonSection'
+import TrustBadgesSection from '@/components/website-sections/TrustBadgesSection'
+import SocialProofBarSection from '@/components/website-sections/SocialProofBarSection'
+// Directory sections
+import SearchFilterBar from '@/components/website-sections/SearchFilterBar'
+import CategoryGridSection from '@/components/website-sections/CategoryGridSection'
+import FeaturedListingsSection from '@/components/website-sections/FeaturedListingsSection'
+import BusinessListingsGridSection from '@/components/website-sections/BusinessListingsGridSection'
+import AddBusinessCTASection from '@/components/website-sections/AddBusinessCTASection'
+// Event sections
+import EventHeroSection from '@/components/website-sections/EventHeroSection'
+import EventDetailsSection from '@/components/website-sections/EventDetailsSection'
+import ScheduleSection from '@/components/website-sections/ScheduleSection'
+import SpeakersSection from '@/components/website-sections/SpeakersSection'
+import TicketPricingSection from '@/components/website-sections/TicketPricingSection'
+import VenueSection from '@/components/website-sections/VenueSection'
+import RSVPFormSection from '@/components/website-sections/RSVPFormSection'
+import SponsorsSection from '@/components/website-sections/SponsorsSection'
+// Restaurant sections
+import RestaurantHeroSection from '@/components/website-sections/RestaurantHeroSection'
+import MenuSection from '@/components/website-sections/MenuSection'
+import AboutRestaurantSection from '@/components/website-sections/AboutRestaurantSection'
+import LocationHoursSection from '@/components/website-sections/LocationHoursSection'
+import OnlineOrderingCTASection from '@/components/website-sections/OnlineOrderingCTASection'
+import SpecialOffersSection from '@/components/website-sections/SpecialOffersSection'
+// Portfolio sections
+import PortfolioHeroSection from '@/components/website-sections/PortfolioHeroSection'
+import WorkGallerySection from '@/components/website-sections/WorkGallerySection'
+import AboutMeSection from '@/components/website-sections/AboutMeSection'
+import ServicesOfferedSection from '@/components/website-sections/ServicesOfferedSection'
+import SkillsExpertiseSection from '@/components/website-sections/SkillsExpertiseSection'
+import ProcessWorkSection from '@/components/website-sections/ProcessWorkSection'
+import HireMeSection from '@/components/website-sections/HireMeSection'
+// Church/NGO sections
+import OrganizationHeroSection from '@/components/website-sections/OrganizationHeroSection'
+import MissionSection from '@/components/website-sections/MissionSection'
+import ProgramsServicesSection from '@/components/website-sections/ProgramsServicesSection'
+import UpcomingEventsListSection from '@/components/website-sections/UpcomingEventsListSection'
+import SermonsResourcesSection from '@/components/website-sections/SermonsResourcesSection'
+import ImpactProjectsSection from '@/components/website-sections/ImpactProjectsSection'
+import DonationSection from '@/components/website-sections/DonationSection'
+import VolunteerSection from '@/components/website-sections/VolunteerSection'
+import StoriesTestimonialsSection from '@/components/website-sections/StoriesTestimonialsSection'
 
 interface SectionConfig {
   type: string
@@ -35,6 +87,7 @@ interface DynamicWebsiteProps {
 }
 
 const SECTION_COMPONENTS: Record<string, React.ComponentType<any>> = {
+  // Common sections
   hero: HeroFullScreen,
   features: FeaturesGrid,
   testimonials: Testimonials,
@@ -46,6 +99,58 @@ const SECTION_COMPONENTS: Record<string, React.ComponentType<any>> = {
   process: ProcessSteps,
   cta: CTABanner,
   gallery: GalleryGrid,
+  // WhatsApp Lead sections
+  whyWhatsApp: WhyWhatsAppSection,
+  servicePackages: ServicePackagesSection,
+  whatsappConversation: WhatsAppConversationSection,
+  quickResponseGuarantee: QuickResponseSection,
+  // Landing Page sections
+  videoHero: VideoHeroSection,
+  problemSolution: ProblemSolutionSection,
+  countdownTimer: CountdownTimerSection,
+  comparisonBeforeAfter: ComparisonSection,
+  trustBadges: TrustBadgesSection,
+  socialProofBar: SocialProofBarSection,
+  // Directory sections
+  searchFilterBar: SearchFilterBar,
+  categoryGrid: CategoryGridSection,
+  featuredListings: FeaturedListingsSection,
+  businessListingsGrid: BusinessListingsGridSection,
+  addBusinessCTA: AddBusinessCTASection,
+  // Event sections
+  eventHero: EventHeroSection,
+  eventDetails: EventDetailsSection,
+  scheduleAgenda: ScheduleSection,
+  speakersPerformers: SpeakersSection,
+  ticketPricing: TicketPricingSection,
+  venueSection: VenueSection,
+  rsvpForm: RSVPFormSection,
+  sponsors: SponsorsSection,
+  // Restaurant sections
+  restaurantHero: RestaurantHeroSection,
+  menuSection: MenuSection,
+  aboutRestaurant: AboutRestaurantSection,
+  locationHours: LocationHoursSection,
+  onlineOrderingCTA: OnlineOrderingCTASection,
+  specialOffers: SpecialOffersSection,
+  // Portfolio sections
+  portfolioHero: PortfolioHeroSection,
+  workGallery: WorkGallerySection,
+  aboutMe: AboutMeSection,
+  servicesOffered: ServicesOfferedSection,
+  skillsExpertise: SkillsExpertiseSection,
+  processSection: ProcessWorkSection,
+  hireMe: HireMeSection,
+  // Church/NGO sections
+  organizationHero: OrganizationHeroSection,
+  missionSection: MissionSection,
+  programsServices: ProgramsServicesSection,
+  upcomingEventsList: UpcomingEventsListSection,
+  sermonsResources: SermonsResourcesSection,
+  impactProjects: ImpactProjectsSection,
+  donationSection: DonationSection,
+  volunteerSection: VolunteerSection,
+  storiesTestimonials: StoriesTestimonialsSection,
 }
 
 export default function DynamicWebsite({

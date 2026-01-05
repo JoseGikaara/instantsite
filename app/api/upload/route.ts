@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentAgent } from '@/lib/get-agent'
 import { writeFile, mkdir } from 'fs/promises'
-import { join } from 'path'
-import { existsSync } from 'fs'
+import path from 'path'
+import { v4 as uuidv4 } from 'uuid'
 
 export async function POST(request: NextRequest) {
   try {
@@ -12,11 +12,10 @@ export async function POST(request: NextRequest) {
     }
 
     const formData = await request.formData()
-    const file = formData.get('file') as File
-    const previewId = formData.get('previewId') as string
+    const file = formData.get('image') as File
 
     if (!file) {
-      return NextResponse.json({ error: 'No file provided' }, { status: 400 })
+      return NextResponse.json({ error: 'No file uploaded' }, { status: 400 })
     }
 
     // Validate file type
@@ -24,43 +23,34 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'File must be an image' }, { status: 400 })
     }
 
-    // Validate file size (max 5MB)
+    // Validate file size (5MB max)
     if (file.size > 5 * 1024 * 1024) {
       return NextResponse.json({ error: 'File size must be less than 5MB' }, { status: 400 })
     }
 
-    // Create uploads directory if it doesn't exist
-    const uploadsDir = join(process.cwd(), 'public', 'uploads', previewId || 'temp')
-    if (!existsSync(uploadsDir)) {
-      await mkdir(uploadsDir, { recursive: true })
-    }
-
     // Generate unique filename
-    const timestamp = Date.now()
-    const randomStr = Math.random().toString(36).substring(7)
-    const extension = file.name.split('.').pop()
-    const filename = `${timestamp}-${randomStr}.${extension}`
+    const fileExtension = file.name.split('.').pop() || 'jpg'
+    const fileName = `${uuidv4()}.${fileExtension}`
+
+    // Ensure upload directory exists
+    const uploadDir = path.join(process.cwd(), 'public', 'uploads')
+    await mkdir(uploadDir, { recursive: true })
 
     // Save file
     const bytes = await file.arrayBuffer()
     const buffer = Buffer.from(bytes)
-    const filepath = join(uploadsDir, filename)
-    await writeFile(filepath, buffer)
+    const filePath = path.join(uploadDir, fileName)
+    await writeFile(filePath, buffer)
 
     // Return public URL
-    const publicUrl = `/uploads/${previewId || 'temp'}/${filename}`
+    const url = `/uploads/${fileName}`
 
-    return NextResponse.json({
-      success: true,
-      url: publicUrl,
-      filename,
-    })
+    return NextResponse.json({ url, fileName })
   } catch (error) {
-    console.error('Upload error:', error)
+    console.error('Image upload error:', error)
     return NextResponse.json(
-      { error: 'Failed to upload image' },
+      { error: 'Upload failed', details: error instanceof Error ? error.message : 'Unknown error' },
       { status: 500 }
     )
   }
 }
-

@@ -3,13 +3,75 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { AVAILABLE_SECTIONS, GLOBAL_FEATURES, SectionConfig } from '@/lib/section-types'
+import { AVAILABLE_SECTIONS, GLOBAL_FEATURES, SectionConfig, getSectionsForType } from '@/lib/section-types'
+import { HeroSectionConfigurator } from '@/components/configurators/HeroSectionConfigurator'
+import { ImageGalleryConfigurator } from '@/components/configurators/ImageGalleryConfigurator'
+import { ContactFormConfigurator } from '@/components/configurators/ContactFormConfigurator'
+import { PricingTableConfigurator } from '@/components/configurators/PricingTableConfigurator'
+import { TestimonialsConfigurator } from '@/components/configurators/TestimonialsConfigurator'
+import { MenuSectionConfigurator } from '@/components/configurators/MenuSectionConfigurator'
 
 const WEBSITE_TYPES = [
-  'Local Business Website',
-  'WhatsApp Lead Website',
-  'Landing Page',
-  'Directory Listing Page',
+  { 
+    value: 'Local Business Website', 
+    label: 'Local Business Website',
+    description: 'Perfect for local businesses, shops, and services',
+    icon: '🏪',
+    popular: true
+  },
+  { 
+    value: 'WhatsApp Lead Website', 
+    label: 'WhatsApp Lead Website',
+    description: 'Ideal for real estate agents, consultants, tutors, coaches',
+    icon: '💬',
+    popular: true
+  },
+  { 
+    value: 'Landing Page', 
+    label: 'Landing Page',
+    description: 'Product launches, events, courses, special offers',
+    icon: '🚀',
+    popular: false
+  },
+  { 
+    value: 'Directory Listing Page', 
+    label: 'Directory Listing Page',
+    description: 'Best X in Nairobi aggregators, local guides, review sites',
+    icon: '📋',
+    popular: false
+  },
+  { 
+    value: 'Event Website', 
+    label: 'Event Website',
+    description: 'Weddings, conferences, workshops, concerts, fundraisers',
+    icon: '🎉',
+    popular: false,
+    new: true
+  },
+  { 
+    value: 'Restaurant/Menu Website', 
+    label: 'Restaurant/Menu Website',
+    description: 'Restaurants, cafes, bars, food trucks, catering',
+    icon: '🍽️',
+    popular: false,
+    new: true
+  },
+  { 
+    value: 'Portfolio Website', 
+    label: 'Portfolio Website',
+    description: 'Photographers, designers, artists, developers, freelancers',
+    icon: '🎨',
+    popular: false,
+    new: true
+  },
+  { 
+    value: 'Church/NGO Website', 
+    label: 'Church/NGO Website',
+    description: 'Churches, mosques, NGOs, charities, community organizations',
+    icon: '⛪',
+    popular: false,
+    new: true
+  },
 ]
 
 interface Agent {
@@ -30,13 +92,17 @@ export default function GenerateClient({ agent }: { agent: Agent }) {
   // Step 2: Sections
   const [selectedSections, setSelectedSections] = useState<SectionConfig[]>([])
   
-  // Step 3: Business Info
+  // Step 3: Section Configurations
+  const [sectionConfigurations, setSectionConfigurations] = useState<Record<string, any>>({})
+  const [currentConfigSectionIndex, setCurrentConfigSectionIndex] = useState(0)
+  
+  // Step 4: Business Info
   const [businessName, setBusinessName] = useState('')
   const [phone, setPhone] = useState('')
   const [location, setLocation] = useState('')
   const [services, setServices] = useState('')
   
-  // Step 4: Global Features
+  // Step 5: Global Features
   const [globalFeatures, setGlobalFeatures] = useState({
     whatsappFloat: false,
     newsletter: false,
@@ -167,7 +233,7 @@ export default function GenerateClient({ agent }: { agent: Agent }) {
             <div>
               <div className="mb-6">
                 <div className="inline-block px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-xs font-medium text-purple-400 mb-2">
-                  Step 1 of 4
+                  Step 1 of 5
                 </div>
                 <h2 className="text-2xl font-bold text-white mt-4">Choose Website Type & Theme</h2>
                 <p className="text-gray-400 text-sm mt-2">Select your website type and customize colors</p>
@@ -176,18 +242,36 @@ export default function GenerateClient({ agent }: { agent: Agent }) {
               <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-300 mb-3">Website Type</label>
-                  <div className="grid gap-3">
+                  <div className="grid md:grid-cols-2 gap-3">
                     {WEBSITE_TYPES.map((type) => (
                       <button
-                        key={type}
-                        onClick={() => setWebsiteType(type)}
-                        className={`p-4 rounded-xl border text-left transition ${
-                          websiteType === type
+                        key={type.value}
+                        onClick={() => setWebsiteType(type.value)}
+                        className={`p-4 rounded-xl border text-left transition relative ${
+                          websiteType === type.value
                             ? 'border-purple-500 bg-purple-500/10'
                             : 'border-white/10 hover:border-purple-500/50'
                         }`}
                       >
-                        <span className="text-white font-medium">{type}</span>
+                        <div className="flex items-start gap-3">
+                          <span className="text-2xl">{type.icon}</span>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-white font-medium">{type.label}</span>
+                              {type.popular && (
+                                <span className="px-2 py-0.5 bg-purple-500/20 border border-purple-500/30 rounded text-xs text-purple-300">
+                                  Popular
+                                </span>
+                              )}
+                              {type.new && (
+                                <span className="px-2 py-0.5 bg-green-500/20 border border-green-500/30 rounded text-xs text-green-300">
+                                  New
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-gray-400 text-xs mt-1">{type.description}</p>
+                          </div>
+                        </div>
                       </button>
                     ))}
                   </div>
@@ -313,7 +397,7 @@ export default function GenerateClient({ agent }: { agent: Agent }) {
             <div>
               <div className="mb-6">
                 <div className="inline-block px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-xs font-medium text-purple-400 mb-2">
-                  Step 2 of 4
+                  Step 2 of 5
                 </div>
                 <h2 className="text-2xl font-bold text-white mt-4">Choose Sections</h2>
                 <p className="text-gray-400 text-sm mt-2">Select sections to include in your website</p>
@@ -328,9 +412,26 @@ export default function GenerateClient({ agent }: { agent: Agent }) {
               <div className="space-y-6">
                 {/* Available Sections */}
                 <div>
-                  <h3 className="text-lg font-semibold text-white mb-4">Available Sections</h3>
+                  <h3 className="text-lg font-semibold text-white mb-4">
+                    Available Sections {websiteType && `for ${websiteType}`}
+                  </h3>
                   <div className="grid md:grid-cols-3 gap-4">
-                    {Object.entries(AVAILABLE_SECTIONS).map(([key, section]) => {
+                    {Object.entries(AVAILABLE_SECTIONS)
+                      .filter(([key, section]) => {
+                        // Always show hero
+                        if (key === 'hero') return true
+                        // If website type selected, filter by type
+                        if (websiteType && section.websiteTypes) {
+                          return section.websiteTypes.includes(websiteType)
+                        }
+                        // If no website type, show common sections (no websiteTypes restriction)
+                        if (!websiteType) {
+                          return !section.websiteTypes
+                        }
+                        // Show all if website type matches or section has no type restriction
+                        return !section.websiteTypes || section.websiteTypes.includes(websiteType)
+                      })
+                      .map(([key, section]) => {
                       const isSelected = selectedSections.some(s => s.type === key)
                       const isHero = key === 'hero'
                       
@@ -461,22 +562,313 @@ export default function GenerateClient({ agent }: { agent: Agent }) {
                       setError('Please select at least one section')
                       return
                     }
+                    setCurrentConfigSectionIndex(0)
                     setStep(3)
                   }}
                   className="flex-1 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition-all"
                 >
-                  Next: Business Info →
+                  Next: Configure Sections →
                 </button>
               </div>
             </div>
           )}
 
-          {/* Step 3: Business Info */}
+          {/* Step 3: Section Configuration */}
           {step === 3 && (
             <div>
               <div className="mb-6">
                 <div className="inline-block px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-xs font-medium text-purple-400 mb-2">
-                  Step 3 of 4
+                  Step 3 of 5 - Section {currentConfigSectionIndex + 1} of {selectedSections.length}
+                </div>
+                <h2 className="text-2xl font-bold text-white mt-4">Configure Sections</h2>
+                <p className="text-gray-400 text-sm mt-2">Customize each section before generation</p>
+              </div>
+
+              {/* Progress Bar */}
+              <div className="mb-6">
+                <div className="text-sm text-gray-400 mb-2">
+                  {currentConfigSectionIndex + 1} of {selectedSections.length} sections configured
+                </div>
+                <div className="w-full bg-white/5 rounded-full h-2">
+                  <div 
+                    className="bg-gradient-to-r from-purple-600 to-pink-600 h-2 rounded-full transition-all"
+                    style={{ width: `${((currentConfigSectionIndex + 1) / selectedSections.length) * 100}%` }}
+                  />
+                </div>
+              </div>
+
+              {/* Section List */}
+              <div className="mb-6 space-y-2">
+                {selectedSections.map((section, idx) => {
+                  const sectionDef = AVAILABLE_SECTIONS[section.type]
+                  const isConfigured = sectionConfigurations[section.type] !== undefined
+                  const isCurrent = idx === currentConfigSectionIndex
+                  
+                  return (
+                    <div
+                      key={section.id}
+                      className={`p-4 rounded-xl border transition ${
+                        isCurrent
+                          ? 'border-purple-500 bg-purple-500/10'
+                          : isConfigured
+                          ? 'border-green-500/30 bg-green-500/5'
+                          : 'border-white/10 bg-white/5'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <span className="text-2xl">{sectionDef?.icon || '📄'}</span>
+                          <div>
+                            <div className="text-white font-medium">
+                              {idx + 1}. {sectionDef?.name || section.type}
+                            </div>
+                            <div className="text-xs text-gray-400">{sectionDef?.description}</div>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          {isConfigured && (
+                            <span className="px-2 py-1 bg-green-500/20 border border-green-500/30 rounded text-xs text-green-400">
+                              ✓ Configured
+                            </span>
+                          )}
+                          {isCurrent && (
+                            <span className="px-2 py-1 bg-purple-500/20 border border-purple-500/30 rounded text-xs text-purple-400">
+                              Configuring...
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })}
+              </div>
+
+              {/* Current Section Configurator */}
+              {selectedSections[currentConfigSectionIndex] && (() => {
+                const currentSection = selectedSections[currentConfigSectionIndex]
+                const sectionType = currentSection.type
+                const initialConfig = sectionConfigurations[sectionType]
+
+                return (
+                  <div className="bg-white/5 border border-white/10 rounded-xl p-6 mb-6">
+                    {sectionType === 'hero' && (
+                      <HeroSectionConfigurator
+                        onSave={(config) => {
+                          setSectionConfigurations(prev => ({
+                            ...prev,
+                            [sectionType]: config
+                          }))
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        onSkip={() => {
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        initialConfig={initialConfig}
+                      />
+                    )}
+
+                    {sectionType === 'gallery' && (
+                      <ImageGalleryConfigurator
+                        onSave={(config) => {
+                          setSectionConfigurations(prev => ({
+                            ...prev,
+                            [sectionType]: config
+                          }))
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        onSkip={() => {
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        initialConfig={initialConfig}
+                      />
+                    )}
+
+                    {(sectionType === 'contact' || sectionType === 'contactForm') && (
+                      <ContactFormConfigurator
+                        onSave={(config) => {
+                          setSectionConfigurations(prev => ({
+                            ...prev,
+                            [sectionType]: config
+                          }))
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        onSkip={() => {
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        initialConfig={initialConfig}
+                      />
+                    )}
+
+                    {sectionType === 'pricing' && (
+                      <PricingTableConfigurator
+                        onSave={(config) => {
+                          setSectionConfigurations(prev => ({
+                            ...prev,
+                            [sectionType]: config
+                          }))
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        onSkip={() => {
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        initialConfig={initialConfig}
+                      />
+                    )}
+
+                    {sectionType === 'testimonials' && (
+                      <TestimonialsConfigurator
+                        onSave={(config) => {
+                          setSectionConfigurations(prev => ({
+                            ...prev,
+                            [sectionType]: config
+                          }))
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        onSkip={() => {
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        initialConfig={initialConfig}
+                      />
+                    )}
+
+                    {sectionType === 'menuSection' && (
+                      <MenuSectionConfigurator
+                        onSave={(config) => {
+                          setSectionConfigurations(prev => ({
+                            ...prev,
+                            [sectionType]: config
+                          }))
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        onSkip={() => {
+                          if (currentConfigSectionIndex < selectedSections.length - 1) {
+                            setCurrentConfigSectionIndex(prev => prev + 1)
+                          } else {
+                            setStep(4)
+                          }
+                        }}
+                        initialConfig={initialConfig}
+                      />
+                    )}
+
+                    {/* Default configurator for sections without specific configurator */}
+                    {!['hero', 'gallery', 'contact', 'contactForm', 'pricing', 'testimonials', 'menuSection'].includes(sectionType) && (
+                      <div className="space-y-6">
+                        <div>
+                          <h3 className="text-xl font-bold text-white mb-2">
+                            {AVAILABLE_SECTIONS[sectionType]?.name || sectionType}
+                          </h3>
+                          <p className="text-gray-400 text-sm">
+                            {AVAILABLE_SECTIONS[sectionType]?.description || 'This section will be generated by AI.'}
+                          </p>
+                        </div>
+                        <div className="flex justify-between pt-6 border-t border-white/10">
+                          <button
+                            onClick={() => {
+                              if (currentConfigSectionIndex < selectedSections.length - 1) {
+                                setCurrentConfigSectionIndex(prev => prev + 1)
+                              } else {
+                                setStep(4)
+                              }
+                            }}
+                            className="px-6 py-3 text-gray-400 hover:text-white transition"
+                          >
+                            Skip This Section
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (currentConfigSectionIndex < selectedSections.length - 1) {
+                                setCurrentConfigSectionIndex(prev => prev + 1)
+                              } else {
+                                setStep(4)
+                              }
+                            }}
+                            className="px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 rounded-xl font-semibold text-white hover:shadow-lg hover:shadow-purple-500/50 transition"
+                          >
+                            Continue →
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )
+              })()}
+
+              {/* Navigation */}
+              <div className="flex justify-between mt-6">
+                <button
+                  onClick={() => {
+                    if (currentConfigSectionIndex > 0) {
+                      setCurrentConfigSectionIndex(prev => prev - 1)
+                    } else {
+                      setStep(2)
+                    }
+                  }}
+                  className="px-6 py-3 border border-white/10 rounded-xl text-gray-300 hover:bg-white/5 transition"
+                >
+                  ← {currentConfigSectionIndex > 0 ? 'Previous Section' : 'Back'}
+                </button>
+
+                <button
+                  onClick={() => setStep(4)}
+                  className="px-6 py-3 text-gray-400 hover:text-white transition"
+                >
+                  Skip All & Use AI Defaults
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: Business Info */}
+          {step === 4 && (
+            <div>
+              <div className="mb-6">
+                <div className="inline-block px-3 py-1 bg-purple-500/10 border border-purple-500/20 rounded-full text-xs font-medium text-purple-400 mb-2">
+                  Step 4 of 5
                 </div>
                 <h2 className="text-2xl font-bold text-white mt-4">Business Information</h2>
                 <p className="text-gray-400 text-sm mt-2">Fill in your business details</p>

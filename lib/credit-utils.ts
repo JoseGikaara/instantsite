@@ -208,18 +208,27 @@ export async function getHostingCostSummary(agentId: string): Promise<{
   // Calculate next charge date
   // For monthly: 30 days from last charge
   // For annual: 365 days from last charge
-  const nextChargeDate = liveSitesCount > 0
-    ? new Date(
-        Math.min(
-          ...liveSites
-            .map((site) => {
-              if (!site.last_hosting_charged_at) return Date.now()
-              const daysUntilCharge = site.hosting_plan === 'ANNUAL' ? 365 : 30
-              return new Date(site.last_hosting_charged_at).getTime() + daysUntilCharge * 24 * 60 * 60 * 1000
-            })
-        )
-      )
-    : null
+  let nextChargeDate: Date | null = null
+  if (liveSitesCount > 0) {
+    try {
+      const chargeDates = liveSites
+        .map((site) => {
+          if (!site.last_hosting_charged_at) return Date.now()
+          const daysUntilCharge = site.hosting_plan === 'ANNUAL' ? 365 : 30
+          const lastCharged = new Date(site.last_hosting_charged_at).getTime()
+          if (isNaN(lastCharged)) return Date.now()
+          return lastCharged + daysUntilCharge * 24 * 60 * 60 * 1000
+        })
+        .filter((date) => !isNaN(date))
+      
+      if (chargeDates.length > 0) {
+        nextChargeDate = new Date(Math.min(...chargeDates))
+      }
+    } catch (error) {
+      console.error('Error calculating next charge date:', error)
+      nextChargeDate = null
+    }
+  }
 
   return {
     liveSitesCount,

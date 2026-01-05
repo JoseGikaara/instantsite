@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getCurrentAgent } from '@/lib/get-agent'
 import { prisma } from '@/lib/prisma'
-import { generateWebsiteContent, checkRateLimit } from '@/lib/deepseek'
+import { generateAllSectionContent } from '@/lib/generate-content'
+import { checkRateLimit } from '@/lib/deepseek'
 import { CREDIT_COSTS } from '@/lib/credits'
 import { checkCreditAvailability, deductCredits } from '@/lib/credit-utils'
 
@@ -56,16 +57,36 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 403 })
     }
 
-    // Generate AI content
-    const aiContent = await generateWebsiteContent({
-      business_name: preview.business_name,
-      phone: preview.phone,
-      location: preview.location,
-      services: preview.services,
-      website_type: preview.website_type,
-    })
+    // Get sections from preview
+    const sections = (preview.sections as any[]) || []
+    const sectionTypes = sections.map((s: any) => s.type)
 
-    if (!aiContent) {
+    if (sectionTypes.length === 0) {
+      return NextResponse.json(
+        { error: 'No sections found in preview' },
+        { status: 400 }
+      )
+    }
+
+    // Generate AI content for all sections
+    let aiContent = {}
+    try {
+      aiContent = await generateAllSectionContent(sectionTypes, {
+        businessName: preview.business_name,
+        phone: preview.phone || undefined,
+        location: preview.location || undefined,
+        services: preview.services || '',
+        websiteType: preview.website_type,
+      })
+
+      if (Object.keys(aiContent).length === 0) {
+        return NextResponse.json(
+          { error: 'Failed to generate AI content. Please try again.' },
+          { status: 500 }
+        )
+      }
+    } catch (error) {
+      console.error('AI generation error:', error)
       return NextResponse.json(
         { error: 'Failed to generate AI content. Please try again.' },
         { status: 500 }
@@ -86,18 +107,23 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Merge with existing AI content
+    const existingAiContent = (preview.ai_content as Record<string, any>) || {}
+    const mergedAiContent = { ...existingAiContent, ...aiContent }
+
     // Update AI credits used and preview content
+    const aiSectionsCount = Object.keys(aiContent).length
     await prisma.$transaction([
       prisma.agent.update({
         where: { id: agent.id },
         data: {
-          ai_credits_used: { increment: 1 },
+          ai_credits_used: { increment: aiSectionsCount },
         },
       }),
       prisma.websitePreview.update({
         where: { id: preview.id },
         data: {
-          ai_content: JSON.parse(JSON.stringify(aiContent)),
+          ai_content: JSON.parse(JSON.stringify(mergedAiContent)),
         },
       }),
     ])
