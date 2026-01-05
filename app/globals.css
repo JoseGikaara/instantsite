@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --primary: 260 100% 65%;
+    --primary-dark: 260 100% 55%;
+    --accent: 340 82% 62%;
+    --background: 240 10% 3.9%;
+    --surface: 240 8% 8%;
+    --surface-light: 240 6% 12%;
+    --text: 0 0% 98%;
+    --text-muted: 240 5% 64%;
+    --success: 142 76% 36%;
+    --error: 0 84% 60%;
+  }
+}
+
+body {
+  @apply bg-[#0A0A0F] text-white antialiased;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-[#0A0A0F];
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-white/10 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-white/20;
+}
+
+/* Smooth transitions */
+* {
+  @apply transition-colors duration-200;
+}
+
+/* Gradient text utilities */
+.gradient-text {
+  @apply bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent;
+}
+
+/* Glassmorphism */
+.glass {
+  @apply bg-white/5 backdrop-blur-xl border border-white/10;
+}
+
+/* Glow effects */
+.glow-purple {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+}
+
+.glow-pink {
+  box-shadow: 0 0 20px rgba(239, 77, 142, 0.3);
+}
+
+/* Animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.6s ease-out forwards;
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s ease-out forwards;
+}

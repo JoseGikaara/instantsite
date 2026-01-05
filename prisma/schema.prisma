@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Agent {
+  id            String           @id @default(cuid())
+  email         String           @unique
+  password      String
+  credit_balance Int             @default(10)
+  ai_credits_used Int            @default(0)
+  created_at    DateTime         @default(now())
+  previews      WebsitePreview[]
+  audits        Audit[]
+  redemption_codes RedemptionCode[]
+}
+
+enum WebsiteStatus {
+  PREVIEW
+  LIVE
+  PAUSED
+}
+
+enum HostingPlan {
+  MONTHLY
+  ANNUAL
+}
+
+model WebsitePreview {
+  id            String   @id @default(cuid())
+  agent_id      String
+  agent         Agent    @relation(fields: [agent_id], references: [id], onDelete: Cascade)
+  
+  // Basic Info
+  business_name String
+  phone         String?
+  location      String?
+  website_type  String
+  services      String?  @db.Text
+  
+  // Design System
+  primary_color String   @default("#8B5CF6")
+  accent_color  String   @default("#EF4D8E")
+  theme         String   @default("dark")
+  
+  // Selected Sections (JSON array of section configs)
+  sections      Json     @default("[]")
+  
+  // AI Generated Content
+  ai_content    Json?    @default("{}")
+  
+  // Global Features
+  global_features Json?  @default("{}")
+  
+  preview_url   String?  @unique
+  
+  // Status & Deployment
+  status        WebsiteStatus @default(PREVIEW)
+  hosting_plan  HostingPlan?  // MONTHLY or ANNUAL (null for PREVIEW)
+  deployed_at   DateTime?
+  last_hosting_charged_at DateTime?
+  
+  created_at    DateTime @default(now())
+  
+  @@index([status])
+  @@index([agent_id, status])
+}
+
+model Audit {
+  id               String   @id @default(cuid())
+  agent_id         String
+  agent            Agent    @relation(fields: [agent_id], references: [id], onDelete: Cascade)
+  business_name    String
+  location         String
+  found            Boolean
+  completeness_score Int
+  reviews_present  Boolean
+  photos_present   Boolean
+  created_at       DateTime @default(now())
+}
+
+model CreditPackage {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  credits     Int
+  price       Int
+  description String?
+  active      Boolean  @default(true)
+  created_at  DateTime @default(now())
+  
+  redemption_codes RedemptionCode[]
+}
+
+model RedemptionCode {
+  id              String         @id @default(cuid())
+  code            String         @unique
+  package_id      String
+  package         CreditPackage  @relation(fields: [package_id], references: [id], onDelete: Cascade)
+  
+  // Status
+  is_redeemed     Boolean        @default(false)
+  redeemed_at     DateTime?
+  redeemed_by     String?
+  agent           Agent?         @relation(fields: [redeemed_by], references: [id])
+  
+  // Tracking
+  generated_by    String?
+  created_at      DateTime       @default(now())
+  expires_at      DateTime?
+  
+  @@index([code])
+  @@index([is_redeemed])
+}
+

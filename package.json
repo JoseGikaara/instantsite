@@ -1,0 +1,40 @@
+{
+  "name": "instantsite",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "cross-env DATABASE_URL='postgresql://postgres:jose1234@localhost:5432/instantsite' next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:push": "cross-env DATABASE_URL='postgresql://postgres:jose1234@localhost:5432/instantsite' prisma db push",
+    "db:studio": "prisma studio",
+    "db:seed": "cross-env DATABASE_URL='postgresql://postgres:jose1234@localhost:5432/instantsite' tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.7.1",
+    "bcryptjs": "^2.4.3",
+    "next": "14.0.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "autoprefixer": "^10.0.1",
+    "cross-env": "^7.0.3",
+    "dotenv-cli": "^11.0.0",
+    "eslint": "^8",
+    "eslint-config-next": "14.0.4",
+    "postcss": "^8",
+    "prisma": "^5.7.1",
+    "tailwindcss": "^3.3.0",
+    "tsx": "^4.7.0",
+    "typescript": "^5"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  }
+}
