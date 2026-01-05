@@ -114,7 +114,6 @@ export default function VolunteerSection({
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                   className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-                  style={{ focusRingColor: primaryColor }}
                 />
               </div>
 
@@ -126,7 +125,6 @@ export default function VolunteerSection({
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-                  style={{ focusRingColor: primaryColor }}
                 />
               </div>
 
@@ -137,7 +135,6 @@ export default function VolunteerSection({
                   value={formData.phone}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                   className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-                  style={{ focusRingColor: primaryColor }}
                 />
               </div>
 
@@ -151,7 +148,6 @@ export default function VolunteerSection({
                   onChange={(e) => setFormData({ ...formData, interest: e.target.value })}
                   rows={4}
                   className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-                  style={{ focusRingColor: primaryColor }}
                   placeholder="Tell us what you're interested in..."
                 />
               </div>

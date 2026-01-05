@@ -55,7 +55,7 @@ export function HeroSectionConfigurator({ onSave, onSkip, initialConfig }: HeroS
 
   const handleSave = async () => {
     // Upload image first if provided
-    let imageUrl = config.backgroundImage || null
+    let imageUrl = imagePreview || null
     if (backgroundImage) {
       setUploading(true)
       try {

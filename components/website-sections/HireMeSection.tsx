@@ -85,7 +85,6 @@ export default function HireMeSection({
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-                style={{ focusRingColor: primaryColor }}
               />
             </div>
 
@@ -97,7 +96,6 @@ export default function HireMeSection({
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-                style={{ focusRingColor: primaryColor }}
               />
             </div>
 
@@ -108,7 +106,6 @@ export default function HireMeSection({
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-                style={{ focusRingColor: primaryColor }}
               />
             </div>
 
@@ -120,7 +117,6 @@ export default function HireMeSection({
                 onChange={(e) => setFormData({ ...formData, project: e.target.value })}
                 rows={4}
                 className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-                style={{ focusRingColor: primaryColor }}
                 placeholder="Tell me about your project..."
               />
             </div>

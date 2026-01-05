@@ -43,7 +43,6 @@ export default function SearchFilterBar({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-              style={{ focusRingColor: primaryColor }}
             />
           </div>
 
@@ -53,7 +52,6 @@ export default function SearchFilterBar({
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-              style={{ focusRingColor: primaryColor }}
             >
               <option value="">All Categories</option>
               {data.categories.map((cat: string, index: number) => (
@@ -70,7 +68,6 @@ export default function SearchFilterBar({
               value={selectedLocation}
               onChange={(e) => setSelectedLocation(e.target.value)}
               className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-              style={{ focusRingColor: primaryColor }}
             >
               <option value="">All Locations</option>
               {data.locations.map((loc: string, index: number) => (
@@ -85,7 +82,6 @@ export default function SearchFilterBar({
           <div className="md:w-40">
             <select
               className={`w-full px-4 py-3 rounded-xl border ${inputClass} focus:outline-none focus:ring-2`}
-              style={{ focusRingColor: primaryColor }}
             >
               <option>Sort by Rating</option>
               <option>Sort by Name</option>

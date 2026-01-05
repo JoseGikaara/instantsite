@@ -30,7 +30,7 @@ export default function GalleryGrid({ content, primaryColor, accentColor, theme,
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
           {images.map((image: string | { url: string; alt?: string }, index: number) => {
             const imageUrl = typeof image === 'string' ? image : image.url
-            const imageAlt = typeof image === 'object' ? image.alt : `Gallery image ${index + 1}`
+            const imageAlt = typeof image === 'object' ? (image.alt || `Gallery image ${index + 1}`) : `Gallery image ${index + 1}`
             
             return (
               <div
